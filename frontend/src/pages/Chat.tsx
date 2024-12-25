@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { red } from '@mui/material/colors';
 import ChatItem from '../components/chat/ChatItem';
 import { IoMdSend } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom'
 import { deleteUserChats, getUserChats, sendChatRequest } from '../helpers/api-communicator';
 import toast from 'react-hot-toast';
 type Message = {
@@ -11,6 +12,7 @@ type Message = {
     content: string;
 }
 const Chat = () => {
+    const navigate = useNavigate()
     const inputRef = useRef<HTMLInputElement | null>(null)
     const auth = useAuth()
     const [chatMessages, setChatMessages] = useState<Message[]>([])
@@ -50,6 +52,11 @@ const Chat = () => {
         })
         }
     }, [auth])
+    useEffect(() => {
+        if(!auth?.user) {
+            return navigate("/login")
+        }
+    },[auth])
     return <Box sx={{display:'flex',flex:1,width:'100%',height:'100%',mt:3,gap:3}}>
         <Box sx={{display:{md:"flex",xs:"none",sm:"none"},flex:0.2,flexDirection:'column'}}>
             <Box sx={{display:"flex",width:"100%",height:"60vh",bgcolor:"rgb(17,29,39)",borderRadius:5,flexDirection:'column',mx:3,}}>
@@ -66,7 +73,7 @@ const Chat = () => {
             </Box>
             <div style={{width:"100%",padding:"20px",borderRadius:8,backgroundColor:"rgb(17,27,39)",display:"flex",margin:"auto"}}>
                 {" "}<input ref={inputRef} type="text" style={{width: "100%",backgroundColor:"transparent",padding:'10px',border:"none",outline:"none",color:"white",fontSize:"20px"}}/>
-                <IconButton onClick={handleSubmit} sx={{ml:"auto",color:'white',}}><IoMdSend/></IconButton>
+                <IconButton onClick={handleSubmit} sx={{ml:"auto",color:'white',mx:1}}><IoMdSend/></IconButton>
             </div>
         </Box>
     </Box>
